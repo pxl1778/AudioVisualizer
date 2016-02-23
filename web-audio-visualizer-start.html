@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<title>Web Audio Visualizer</title>
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="script.js"></script>
+</head>
+<body>
+	<canvas id="canvas" width="640" height="400"></canvas>
+	<div id="controls">
+		<audio controls loop></audio>
+		<label>Track: 
+			<select id="trackSelect" >
+				<option value="media/New Adventure Theme.mp3">New Adventure Theme</option>
+				<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
+				<option value="media/The Picard Song.mp3">The Picard Song</option>
+			</select>
+		</label>
+		<button id="fsButton">Go Full Screen</button><br>
+		<div>
+			<label for="circleRadiusSlider">Circle Radius</label>
+			<input id="circleRadiusSlider" type ="range" min ="0.1" max="200" step ="0.1" value ="200"/>
+			<span style="float:right" id="sliderResults">???</span>
+		</div>
+		<p id="status">???</p>
+		<div>
+			<input type="checkbox" id="tintRedCheckbox">Red Tint<br>
+			<input type="checkbox" id="invertCheckbox">Invert<br>
+			<input type="checkbox" id="noiseCheckbox">Noise<br>
+			<input type="checkbox" id="linesCheckbox">Lines<br>	
+		</div>
+	</div>
+</body>
+</html>
