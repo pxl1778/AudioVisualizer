@@ -70,6 +70,7 @@
 			var topSpacing = 50;*/
 			
 			
+			
 			rotatingLines(lineDotPositions.length);
 			
 			for(var i=0; i<data.length; i++) { 
@@ -92,6 +93,7 @@
 				ctx.closePath();
 				ctx.stroke();
 				*/
+				circleStarThings();
 				//red circles
 				var percent = data[i] / 255;
 				var circleRadius = percent * maxRadius;
@@ -115,6 +117,9 @@
 				ctx.closePath();
 				ctx.restore();
 				
+				
+				
+			
 			}
 			document.querySelector("#sliderResults").innerHTML = maxRadius;
 			manipulatePixels();
@@ -212,6 +217,32 @@
 			  element.webkitRequestFullscreen();
 			}
 		};
+		
+		/*Circle things*/
+		
+		/*
+function circleStarThings()
+		{
+			var x=10;
+			var y=20;
+			
+			for(var i = 0; i < canvas.width; i++)
+			{
+				for(var j = 0; j < canvas.height; j++)
+			{
+				ctx.beginPath();
+				ctx.fillStyle = makeColor(255,255, 255);
+				ctx.arc(x, y, 5, 0, 2*Math.PI);
+				ctx.fill();
+				ctx.closePath();
+				console.log("gee");
+				x = x + 20;
+				y = y +20;
+			}
+		}
+		}
+*/
+
 		
 		//Takes a number of lines to be created.
 		//Must be the length of both the lineDotPositions array and
