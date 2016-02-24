@@ -9,6 +9,9 @@
 		var analyserNode;
 		var canvas,ctx;
 		var maxRadius;
+		var average = 0; //Average of the sound information: Low sounds are ~30, Loud sounds are ~110, most music is 65-90
+		var lineDotPositions = [0, 30, -100, 200, 10, -20]; //Positions of lights on lines
+		var lineDotForward = [true, false, true, false, true, true]; //Whether the lights are moving forward or back
 		var invert = false, tintRed = false, noise = false, lines = false;
 		
 		function init(){
@@ -52,21 +55,28 @@
 			// populate the array with the frequency data
 			// notice these arrays can be passed "by reference" 
 			analyserNode.getByteFrequencyData(data);
-		
+			for(var i=0; i<data.length; i++)
+			{
+				average += data[i];
+			}
+			average = average/data.length;
 			// OR
 			//analyserNode.getByteTimeDomainData(data); // waveform data
 			
 			ctx.clearRect(0,0,800,600);  
-			var barWidth = 4;
+			/*var barWidth = 4;
 			var barSpacing = 1;
 			var barHeight = 100;
-			var topSpacing = 50;
+			var topSpacing = 50;*/
+			
+			
+			rotatingLines(lineDotPositions.length);
 			
 			for(var i=0; i<data.length; i++) { 
 				ctx.fillStyle = 'rgba(0,255,0,0.6)'; 
 				ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
 				
-				ctx.lineCap = "round";
+				/*ctx.lineCap = "round";
 				ctx.lineWidth = 20;
 				ctx.beginPath();
 				ctx.moveTo(i*(barWidth + barSpacing), topSpacing + 256 - data[i]);
@@ -81,6 +91,7 @@
 				ctx.lineTo(640-i*(barWidth + barSpacing), topSpacing + 256 - data[i]+barHeight);
 				ctx.closePath();
 				ctx.stroke();
+				*/
 				//red circles
 				var percent = data[i] / 255;
 				var circleRadius = percent * maxRadius;
@@ -103,6 +114,7 @@
 				ctx.fill();
 				ctx.closePath();
 				ctx.restore();
+				
 			}
 			document.querySelector("#sliderResults").innerHTML = maxRadius;
 			manipulatePixels();
@@ -201,6 +213,64 @@
 			}
 		};
 		
+		//Takes a number of lines to be created.
+		//Must be the length of both the lineDotPositions array and
+		//the lineDotForward array.
+		function rotatingLines(numLines){
+			for(var i=0; i< numLines; i++)
+			{
+				var speed = (average * .1) - 2;
+				ctx.save();
+				ctx.translate(canvas.width/2, canvas.height/2);
+				ctx.rotate(Math.PI / numLines * i);
+				ctx.strokeStyle = "rgb(18, 3, 25)";
+				ctx.lineWidth = 3;
+				ctx.beginPath();
+				ctx.moveTo(-canvas.width/2, -canvas.height/2);
+				ctx.lineTo(canvas.width/2, canvas.height/2);
+				ctx.closePath();
+				ctx.stroke();
+				if(lineDotForward[i] == true)
+				{
+					lineDotPositions[i] += speed;
+				}
+				else
+				{
+					lineDotPositions[i] -= speed;
+				}
+				if(lineDotPositions[i] > canvas.width/2)
+				{
+					lineDotForward[i] = false;
+				}
+				if(lineDotPositions[i] < -canvas.width/2)
+				{
+					lineDotForward[i] = true;
+				}
+				var x = lineDotPositions[i];
+				var y = lineDotPositions[i] * (canvas.height/canvas.width);
+				//ctx.arc(x, y, 5, 0, Math.PI * 2);
+				//ctx.arc(x+5, y, 10, Math.PI, Math.PI*2 /3);
+				//ctx.arc(x, y+5, 10, 0, Math.PI/2);
+				
+				ctx.fill();
+				ctx.save();
+				ctx.beginPath();
+				ctx.rotate(Math.atan(y/x)/300);
+				ctx.translate(x, y);
+				var grd = ctx.createRadialGradient(20,20*canvas.height/canvas.width, 0, 20,20*canvas.height/canvas.width, 15);
+				grd.addColorStop(0, "rgb(193, 154, 227)");
+				grd.addColorStop(1, "rgba(18, 3, 25, 0)")
+				ctx.fillStyle = grd;
+				ctx.strokeStyle = grd;
+				ctx.moveTo(0, 0);
+				ctx.lineTo(40, 40 * canvas.height/canvas.width);
+				ctx.closePath();
+				ctx.lineWidth = 5;
+				ctx.stroke();
+				ctx.restore();
+				ctx.restore();
+			}
+		}
 		
 		window.addEventListener("load",init);
 	}());
