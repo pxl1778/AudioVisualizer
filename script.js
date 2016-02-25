@@ -242,11 +242,6 @@ function circleStarThings()
 	
 		
 		}
-<<<<<<< HEAD
-
-
-=======
->>>>>>> origin/master
 		
 		//Takes a number of lines to be created.
 		//Must be the length of both the lineDotPositions array and
