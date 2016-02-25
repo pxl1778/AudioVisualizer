@@ -2,9 +2,9 @@
 		"use strict";
 		
 		var NUM_SAMPLES = 256;
-		var SOUND_1 = 'media/New Adventure Theme.mp3';
+		var SOUND_3 = 'media/New Adventure Theme.mp3';
 		var SOUND_2 = 'media/Peanuts Theme.mp3';
-		var SOUND_3 = 'media/The Picard Song.mp3';
+		var SOUND_1 = 'media/The Picard Song.mp3';
 		var audioElement;
 		var analyserNode;
 		var canvas,ctx;
@@ -38,9 +38,9 @@
 			document.querySelector('#noiseCheckbox').onchange = function(e){
 				noise = e.target.checked;
 			}
-			document.querySelector('#linesCheckbox').onchange = function(e){
-				lines = e.target.checked;
-			}
+			//document.querySelector('#linesCheckbox').onchange = function(e){
+			//	lines = e.target.checked;
+		//	}
 			
 			setupUI();
 			playStream(audioElement,SOUND_1);
@@ -64,17 +64,20 @@
 			// OR
 			//analyserNode.getByteTimeDomainData(data); // waveform data
 			
-			ctx.clearRect(0,0,800,600);  
+			ctx.clearRect(0,0,800,600); 
+		
 			/*var barWidth = 4;
 			var barSpacing = 1;
 			var barHeight = 100;
 			var topSpacing = 50;*/
 			
 		
-			
+			console.log(average);
 			
 			rotatingLines(lineDotPositions.length);
-			
+			if(average >100){
+				circleStarThings(); 
+			}
 			for(var i=0; i<data.length; i++) { 
 				ctx.fillStyle = 'rgba(0,255,0,0.6)'; 
 				ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
@@ -96,7 +99,6 @@
 				ctx.stroke();
 				*/
 				
-				circleStarThings();
 				//red circles
 				var percent = data[i] / 255;
 				var circleRadius = percent * maxRadius;
@@ -226,27 +228,23 @@
 		
 function circleStarThings()
 		{
+
 			var x = Math.random() * canvas.width;
 			var y = Math.random() * canvas.height;
-			
-			var r =  Math.random();
-			var g =  Math.random();
-			var b =   Math.random();
-			
 				ctx.beginPath();
-				ctx.fillStyle = makeColor(255,255,100, 1);
-				ctx.arc(x, y, 5, 0, 2 * Math.PI);
+				ctx.fillStyle = makeColor(2,205,180, 1);
+				ctx.arc(x , y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 				ctx.closePath();
 				console.log("gee");
-	
-		
+			
+				
 		}
-<<<<<<< HEAD
+//<<<<<<< HEAD
 
 
-=======
->>>>>>> origin/master
+//=======
+//>>>>>>> origin/master
 		
 		//Takes a number of lines to be created.
 		//Must be the length of both the lineDotPositions array and
