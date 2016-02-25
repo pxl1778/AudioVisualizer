@@ -220,7 +220,7 @@
 		
 		/*Circle things*/
 		
-		/*
+		
 function circleStarThings()
 		{
 			var x=10;
@@ -241,7 +241,7 @@ function circleStarThings()
 			}
 		}
 		}
-*/
+
 
 		
 		//Takes a number of lines to be created.
