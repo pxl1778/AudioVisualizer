@@ -1,16 +1,29 @@
 body {
-         background: #eeeeee;
+         background: #888;
+         font: #fff;
          font-family: tahoma, verdana, sans serif;
       }
 
       canvas {
-        margin-left:10px;
-        margin-top:10px;
+        margin-left:25%;
+        margin-right: auto;
+        margin-top:30px;
+        text-align: center;
         box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
         background: black;
+        
+        
     }
       
       #controls{
+	    text-align: center;
       	margin-left:10px;
         margin-top:10px;
+        font-size: 12px;
+      }
+      
+     li{
+	      list-style-type: none;
+	      display: inline-block;
+	  
       }
