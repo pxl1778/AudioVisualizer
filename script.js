@@ -13,6 +13,7 @@
 		var lineDotPositions = [0, 30, -100, 200, 10, -20]; //Positions of lights on lines
 		var lineDotForward = [true, false, true, false, true, true]; //Whether the lights are moving forward or back
 		var invert = false, tintRed = false, noise = false, lines = false;
+	
 		
 		function init(){
 			//initializing variables
@@ -68,7 +69,7 @@
 			var barSpacing = 1;
 			var barHeight = 100;
 			var topSpacing = 50;*/
-			
+		
 			
 			
 			rotatingLines(lineDotPositions.length);
@@ -93,6 +94,7 @@
 				ctx.closePath();
 				ctx.stroke();
 				*/
+				
 				circleStarThings();
 				//red circles
 				var percent = data[i] / 255;
@@ -220,29 +222,25 @@
 		
 		/*Circle things*/
 		
-		/*
+		
 function circleStarThings()
 		{
-			var x=10;
-			var y=20;
+			var x = Math.random() * canvas.width;
+			var y = Math.random() * canvas.height;
 			
-			for(var i = 0; i < canvas.width; i++)
-			{
-				for(var j = 0; j < canvas.height; j++)
-			{
+			var r =  Math.random();
+			var g =  Math.random();
+			var b =   Math.random();
+			
 				ctx.beginPath();
-				ctx.fillStyle = makeColor(255,255, 255);
-				ctx.arc(x, y, 5, 0, 2*Math.PI);
+				ctx.fillStyle = makeColor(255,255,100, 1);
+				ctx.arc(x, y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 				ctx.closePath();
 				console.log("gee");
-				x = x + 20;
-				y = y +20;
-			}
+	
+		
 		}
-		}
-*/
-
 		
 		//Takes a number of lines to be created.
 		//Must be the length of both the lineDotPositions array and
