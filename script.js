@@ -11,7 +11,7 @@
 		var maxRadius;
 		var average = 0; //Average of the sound information: Low sounds are ~30, Loud sounds are ~110, most music is 65-90
 		var lineDotPositions = [0, 30, -100, 200, 10, -20]; //Positions of lights on lines
-		var lineDotForward = [true, false, true, false, true, true]; //Whether the lights are moving forward or back
+		var lineDotForward = [true, true, true, true, true, true]; //Whether the lights are moving forward or back
 		var invert = false, tintRed = false, noise = false, lines = false;
 	
 		
@@ -38,9 +38,12 @@
 			document.querySelector('#noiseCheckbox').onchange = function(e){
 				noise = e.target.checked;
 			}
-			//document.querySelector('#linesCheckbox').onchange = function(e){
-			//	lines = e.target.checked;
-		//	}
+			
+			for(var i=0; i < lineDotPositions.length; i++)
+			{
+				lineDotPositions[i] = -30*i;
+			}
+			
 			
 			setupUI();
 			playStream(audioElement,SOUND_1);
@@ -50,55 +53,24 @@
 		function update() { 
 			requestAnimationFrame(update);
 			
-			// create a new array of 8-bit integers (0-255)
 			var data = new Uint8Array(NUM_SAMPLES/2); 
 			
-			// populate the array with the frequency data
-			// notice these arrays can be passed "by reference" 
 			analyserNode.getByteFrequencyData(data);
 			for(var i=0; i<data.length; i++)
 			{
 				average += data[i];
 			}
 			average = average/data.length;
-			// OR
-			//analyserNode.getByteTimeDomainData(data); // waveform data
 			
-			ctx.clearRect(0,0,800,600); 
-		
-			/*var barWidth = 4;
-			var barSpacing = 1;
-			var barHeight = 100;
-			var topSpacing = 50;*/
+			ctx.clearRect(0,0,canvas.width, canvas.height); 
 			
-		
-			console.log(average);
-			
-			rotatingLines(lineDotPositions.length);
+			drawDotLines(lineDotPositions.length);
 			if(average >100){
 				circleStarThings(); 
 			}
 			for(var i=0; i<data.length; i++) { 
 				ctx.fillStyle = 'rgba(0,255,0,0.6)'; 
 				ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
-				
-				/*ctx.lineCap = "round";
-				ctx.lineWidth = 20;
-				ctx.beginPath();
-				ctx.moveTo(i*(barWidth + barSpacing), topSpacing + 256 - data[i]);
-				ctx.lineTo(i*(barWidth + barSpacing), topSpacing + 256 - data[i]+barHeight);
-				ctx.closePath();
-				ctx.stroke();
-				
-				ctx.strokeStyle = 'rgba(0, 0, 255, 0.2)';
-				ctx.lineWidth = 20;
-				ctx.beginPath();
-				ctx.moveTo(640 - i*(barWidth + barSpacing), topSpacing + 256 - data[i]);
-				ctx.lineTo(640-i*(barWidth + barSpacing), topSpacing + 256 - data[i]+barHeight);
-				ctx.closePath();
-				ctx.stroke();
-				*/
-				
 				//red circles
 				var percent = data[i] / 255;
 				var circleRadius = percent * maxRadius;
@@ -121,11 +93,8 @@
 				ctx.fill();
 				ctx.closePath();
 				ctx.restore();
-				
-				
-				
-			
 			}
+			drawBezier();
 			document.querySelector("#sliderResults").innerHTML = maxRadius;
 			manipulatePixels();
 		} 
@@ -135,23 +104,9 @@
 			var audioCtx, analyserNode, sourceNode;
 			audioCtx = new (window.AudioContext || window.webkitAudioContext);
 			analyserNode = audioCtx.createAnalyser();
-			
-			/*
-			We will request NUM_SAMPLES number of samples or "bins" spaced equally 
-			across the sound spectrum.
-			If NUM_SAMPLES (fftSize) is 256, then the first bin is 0 Hz, the second is 172 Hz, 
-			the third is 344Hz. Each bin contains a number between 0-255 representing 
-			the amplitude of that frequency.
-			*/ 
-			
-			// fft stands for Fast Fourier Transform
 			analyserNode.fftSize = NUM_SAMPLES;
-			
-			// this is where we hook up the <audio> element to the analyserNode
 			sourceNode = audioCtx.createMediaElementSource(audioElement); 
 			sourceNode.connect(analyserNode);
-			
-			// here we connect to the destination i.e. speakers
 			analyserNode.connect(audioCtx.destination);
 			return analyserNode;
 		}
@@ -174,7 +129,7 @@
 		}
 		
 		
-		
+		//Changes the image of the canvas by changing values of individual pixels.
 		function manipulatePixels(){
 			var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 			var data = imageData.data;
@@ -211,12 +166,13 @@
    			return color;
 		}
 		
+		//Makes the visualizer full screen
 		function requestFullscreen(element) {
 			if (element.requestFullscreen) {
 			  element.requestFullscreen();
 			} else if (element.mozRequestFullscreen) {
 			  element.mozRequestFullscreen();
-			} else if (element.mozRequestFullScreen) { // camel-cased 'S' was changed to 's' in spec
+			} else if (element.mozRequestFullScreen) {
 			  element.mozRequestFullScreen();
 			} else if (element.webkitRequestFullscreen) {
 			  element.webkitRequestFullscreen();
@@ -236,23 +192,12 @@ function circleStarThings()
 				ctx.arc(x , y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 				ctx.closePath();
-				console.log("gee");
-			
-				
 		}
-<<<<<<< HEAD
-=======
-//<<<<<<< HEAD
-
-
-//=======
-//>>>>>>> origin/master
->>>>>>> origin/master
 		
 		//Takes a number of lines to be created.
 		//Must be the length of both the lineDotPositions array and
 		//the lineDotForward array.
-		function rotatingLines(numLines){
+		function drawDotLines(numLines){
 			for(var i=0; i< numLines; i++)
 			{
 				var speed = (average * .1) - 2;
@@ -266,6 +211,7 @@ function circleStarThings()
 				ctx.lineTo(canvas.width/2, canvas.height/2);
 				ctx.closePath();
 				ctx.stroke();
+				//Checking which direction the dots will move in.
 				if(lineDotForward[i] == true)
 				{
 					lineDotPositions[i] += speed;
@@ -274,6 +220,7 @@ function circleStarThings()
 				{
 					lineDotPositions[i] -= speed;
 				}
+				//Checking if the dots need to turn around to return to the screen
 				if(lineDotPositions[i] > canvas.width/2)
 				{
 					lineDotForward[i] = false;
@@ -284,28 +231,62 @@ function circleStarThings()
 				}
 				var x = lineDotPositions[i];
 				var y = lineDotPositions[i] * (canvas.height/canvas.width);
-				//ctx.arc(x, y, 5, 0, Math.PI * 2);
-				//ctx.arc(x+5, y, 10, Math.PI, Math.PI*2 /3);
-				//ctx.arc(x, y+5, 10, 0, Math.PI/2);
-				
+				//drawing the dots
 				ctx.fill();
-				ctx.save();
-				ctx.beginPath();
-				ctx.rotate(Math.atan(y/x)/300);
-				ctx.translate(x, y);
-				var grd = ctx.createRadialGradient(20,20*canvas.height/canvas.width, 0, 20,20*canvas.height/canvas.width, 15);
-				grd.addColorStop(0, "rgb(193, 154, 227)");
-				grd.addColorStop(1, "rgba(18, 3, 25, 0)")
-				ctx.fillStyle = grd;
-				ctx.strokeStyle = grd;
-				ctx.moveTo(0, 0);
-				ctx.lineTo(40, 40 * canvas.height/canvas.width);
-				ctx.closePath();
-				ctx.lineWidth = 5;
-				ctx.stroke();
-				ctx.restore();
+				drawDots(x, y);
+				drawDots(x * 2, y * 2);
+				drawDots(x *-1, y*-1);
+				drawDots(x * -2, y* -2);
 				ctx.restore();
 			}
+		}
+		
+		//Draws the dots that move along the purple lines.
+		function drawDots(xCoord, yCoord)
+		{
+			ctx.save();
+			ctx.beginPath();
+			ctx.rotate(Math.atan(yCoord/xCoord)/300);
+			ctx.translate(xCoord, yCoord);
+			//Creating a gradient for glow effect.
+			var grd = ctx.createRadialGradient(20,20*canvas.height/canvas.width, 0, 20,20*canvas.height/canvas.width, 15);
+			grd.addColorStop(0, "rgb(193, 154, 227)");
+			grd.addColorStop(1, "rgba(18, 3, 25, 0)")
+			ctx.fillStyle = grd;
+			ctx.strokeStyle = grd;
+			ctx.moveTo(0, 0);
+			ctx.lineTo(40, 40 * canvas.height/canvas.width);
+			ctx.closePath();
+			ctx.lineWidth = 5;
+			ctx.stroke();
+			ctx.restore();
+		}
+		
+		function drawBezier(){
+			var sounds = new Uint8Array(13);
+			analyserNode.getByteFrequencyData(sounds);
+			var c=0.5519150;
+			ctx.save();
+			ctx.translate(canvas.width/2, canvas.height/2);
+			ctx.strokeStyle = "rgba(255, 255, 255, .2)";
+			//ctx.fillStyle = "rgb(255, 150, 200)";
+			ctx.lineWidth = 3;
+			ctx.beginPath();
+			ctx.moveTo(0, -sounds[0]);
+			ctx.bezierCurveTo(c*sounds[1], -sounds[1], sounds[2], -c*sounds[2], sounds[3], 0);
+			ctx.bezierCurveTo(sounds[4], c*sounds[4], c*sounds[5], sounds[5], 0, sounds[6]);
+			ctx.bezierCurveTo(-c*sounds[7], sounds[7], -sounds[8], c*sounds[8], -sounds[9], 0);
+			ctx.bezierCurveTo(-sounds[10], -c*sounds[10], -c*sounds[11], -sounds[11], 0, -sounds[12]);
+			ctx.closePath();
+			//ctx.fill();
+			ctx.stroke();
+			for(var i=0; i<sounds.length;i++)
+			{
+				ctx.rotate((360/sounds.length) * (Math.PI/180));
+				ctx.rect(-10, -sounds[i], 20, sounds[i]);
+				ctx.stroke();
+			}
+			ctx.restore();
 		}
 		
 		window.addEventListener("load",init);
