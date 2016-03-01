@@ -13,8 +13,8 @@
 		var lineDotPositions = [0, 30, -100, 200, 10, -20]; //Positions of lights on lines
 		var lineDotForward = [true, true, true, true, true, true]; //Whether the lights are moving forward or back
 		var invert = false, tintRed = false, noise = false, lines = false;
-		var circlArra = [];
 		var alphaMult = 1;
+		var addOn = "both";
 	
 
 		function init(){
@@ -46,6 +46,10 @@
 				noise = e.target.checked;
 			}
 			
+			document.querySelector("#addOns").onchange = function(e){
+				addOn = e.target.value;
+			}
+			
 			for(var i=0; i < lineDotPositions.length; i++)
 			{
 				lineDotPositions[i] = -30*i;
@@ -68,42 +72,15 @@
 				average += data[i];
 			}
 			average = average/data.length;
-			
 			ctx.clearRect(0,0,canvas.width, canvas.height); 
-			
 			drawDotLines(lineDotPositions.length);
-			if(average >100){
-	/*
-		var datadot = new Uint8Array(NUM_SAMPLES/3);
-			analyserNode.getByteFrequencyData(datadot);
-			for(var i=0; i<datadot.length; i++)
-			{
-				average2 += datadot[i];
-			}
-			average2 = average2/data.length;
-			circlArra.push(average2);
-			if{circlArra.index > 18}
-				circlArra.splice(18, 1);
-*/
-			
-			
-		
-			/*var barWidth = 4;
-			var barSpacing = 1;
-			var barHeight = 100;
-			var topSpacing = 50;*/
-		
-			
-			rotatingLines(lineDotPositions.length);
-
-				circleStarThings(); 
-			
+			drawAddOns();
 			for(var i=0; i<data.length; i++) { 
 				ctx.fillStyle = 'rgba(0,255,0,0.6)'; 
 				ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
 				//red circles
 				var percent = data[i] / 255;
-				var circleRadius = percent * 50;
+				var circleRadius = percent * 150;
 				ctx.beginPath();
 				ctx.fillStyle = makeColor(255, 111, 111, (.24 * alphaMult) - percent/ 5.0 );
 				ctx.arc(canvas.width/2, canvas.height/2, circleRadius, 0, 2*Math.PI, false);
@@ -123,9 +100,6 @@
 				ctx.fill();
 				ctx.closePath();
 				ctx.restore();
-			}
-			drawBezier();
-				
 			}
 			document.querySelector("#sliderResults").innerHTML = alphaMult;
 			manipulatePixels();
@@ -292,29 +266,39 @@ function circleStarThings(xval)
 			ctx.restore();
 		}
 		
-		function drawBezier(){
+		//Draws either curves, rectangles, both, or neither depending on the add on selection.
+		function drawAddOns(){
 			var sounds = new Uint8Array(13);
 			analyserNode.getByteFrequencyData(sounds);
 			var c=0.5519150;
 			ctx.save();
 			ctx.translate(canvas.width/2, canvas.height/2);
-			ctx.strokeStyle = "rgba(255, 255, 255, .2)";
-			//ctx.fillStyle = "rgb(255, 150, 200)";
+			//Gradient for curves and rectangles
+			var grd = ctx.createRadialGradient(0, 0, 10, 0, 0, 150);
+			grd.addColorStop(1, "rgb(" + sounds[0] + ", " + sounds[1] + ", " + sounds[2] + ")");
+			grd.addColorStop(0, "rgb(" + sounds[10] + ", " + sounds[11] + ", " + sounds[12] + ")");
+			//ctx.strokeStyle = "rgba(255, 255, 255, .2)";
+			ctx.strokeStyle = grd;
 			ctx.lineWidth = 3;
-			ctx.beginPath();
-			ctx.moveTo(0, -sounds[0]);
-			ctx.bezierCurveTo(c*sounds[1], -sounds[1], sounds[2], -c*sounds[2], sounds[3], 0);
-			ctx.bezierCurveTo(sounds[4], c*sounds[4], c*sounds[5], sounds[5], 0, sounds[6]);
-			ctx.bezierCurveTo(-c*sounds[7], sounds[7], -sounds[8], c*sounds[8], -sounds[9], 0);
-			ctx.bezierCurveTo(-sounds[10], -c*sounds[10], -c*sounds[11], -sounds[11], 0, -sounds[12]);
-			ctx.closePath();
-			//ctx.fill();
-			ctx.stroke();
-			for(var i=0; i<sounds.length;i++)
+			if(addOn == "curves" || addOn == "both")
 			{
-				ctx.rotate((360/sounds.length) * (Math.PI/180));
-				ctx.rect(-10, -sounds[i], 20, sounds[i]);
+				ctx.beginPath();
+				ctx.moveTo(0, -sounds[0]);
+				ctx.bezierCurveTo(c*sounds[1], -sounds[1], sounds[2], -c*sounds[2], sounds[3], 0);
+				ctx.bezierCurveTo(sounds[4], c*sounds[4], c*sounds[5], sounds[5], 0, sounds[6]);
+				ctx.bezierCurveTo(-c*sounds[7], sounds[7], -sounds[8], c*sounds[8], -sounds[9], 0);
+				ctx.bezierCurveTo(-sounds[10], -c*sounds[10], -c*sounds[11], -sounds[11], 0, -sounds[12]);
+				ctx.closePath();
 				ctx.stroke();
+			}
+			if(addOn == "rectangles" || addOn == "both")
+			{
+				for(var i=0; i<sounds.length;i++)
+				{
+					ctx.rotate((360/sounds.length) * (Math.PI/180));
+					ctx.rect(-10, -sounds[i], 20, sounds[i]);
+					ctx.stroke();
+				}
 			}
 			ctx.restore();
 		}
