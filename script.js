@@ -86,7 +86,7 @@
 				ctx.arc(canvas.width/2, canvas.height/2, circleRadius, 0, 2*Math.PI, false);
 				ctx.fill();
 				ctx.closePath();
-				//blue circles
+				//blue outer opaque circles
 				ctx.beginPath();
 				ctx.fillStyle = makeColor(0, 0, 255, (.10 * alphaMult) - percent/1.5 * alphaMult);
 				ctx.arc(canvas.width/2, canvas.height/2, circleRadius * 8.25, 0, 2*Math.PI);
