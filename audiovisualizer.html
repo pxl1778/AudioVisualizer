@@ -8,30 +8,54 @@
 </head>
 <body>
 	<canvas id="canvas" width="1000" height="600"></canvas>
+	<head>
+		<!Title for the page>
+		<div class="tits">
+		<p class="tit"> Hartese Audio Visualizer </p>
+		</div>
+	</head>
 	<div id="controls">
+		<!Chooising the Audio!>
 		<audio controls loop></audio>
 		<label>Track: 
 			<select id="trackSelect" >
-				<option value="media/The Picard Song.mp3">The Picard Song</option>
-				<option value="media/New Adventure Theme.mp3">New Adventure Theme</option>
-				<option value="media/Peanuts Theme.mp3">Peanuts Theme</option>
+				<option value="media/sail.mp3"> SAIL</option>
+				<option value="media/Greyhound.mp3"> Greyhound</option>
+				<option value="media/FettyWap.mp3"> Fetty Wap </option>
 			</select>
 		</label>
 		<button id="fsButton">Go Full Screen</button><br>
-		<div>
-			<label for="circleRadiusSlider">Circle Radius</label>
-			<input id="circleRadiusSlider" type ="range" min ="0.1" max="200" step ="0.1" value ="100"/>
-			<span id="sliderResults">???</span>
+				
+		<!Two sliders for the user to interact with>
+		<div class="slid">
+			<label for="circleAlpha">Circle Alpha</label>
+			<input id="circleAlpha" type ="range" min ="0.0" max="1.0" step ="0.1" value ="1"/>
+			<span id="sliderResults">1 </span>
+			
+		 ~ 
+			<label for="backgroundCol">Background Color</label>
+			<input id="backgroundCol" type ="range" min ="0.0" max="255.0" step ="5.0" value ="0"/>
+			<span id="colorResults">0</span>
+			
 		</div>
-		<p id="status">???</p>
+			<!Checkboxes for selection>
 		<div class="boxes">
 			<ul>
 			<li><input type="checkbox" id="tintRedCheckbox">Red Tint<br></li>
 			<li><input type="checkbox" id="invertCheckbox">Invert<br></li>
 			<li><input type="checkbox" id="noiseCheckbox">Noise<br></li>
-			<!--<li><input type="checkbox" id="linesCheckbox">Lines<br>	</li> -->
 			</ul>
 		</div>
+		<!Another selection for the user>
+		<div class="add">
+		<label>Add Ons: 
+			<select id="addOns" >
+				<option value=""> Rectangles </option>
+				<option value=""> Bez Curve</option>
+			</select>
+		</label>
+		</div>
+		<p id="status">???</p>
 	</div>
 </body>
 </html>

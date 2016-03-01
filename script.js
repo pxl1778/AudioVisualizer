@@ -2,9 +2,9 @@
 		"use strict";
 		
 		var NUM_SAMPLES = 256;
-		var SOUND_3 = 'media/New Adventure Theme.mp3';
-		var SOUND_2 = 'media/Peanuts Theme.mp3';
-		var SOUND_1 = 'media/The Picard Song.mp3';
+		var SOUND_2 = 'media/Greyhound.mp3';
+		var SOUND_3 = 'media/FettyWap.mp3';
+		var SOUND_1 = 'media/sail.mp3';
 		var audioElement;
 		var analyserNode;
 		var canvas,ctx;
@@ -13,8 +13,10 @@
 		var lineDotPositions = [0, 30, -100, 200, 10, -20]; //Positions of lights on lines
 		var lineDotForward = [true, true, true, true, true, true]; //Whether the lights are moving forward or back
 		var invert = false, tintRed = false, noise = false, lines = false;
+		var circlArra = [];
+		var alphaMult = 1;
 	
-		
+
 		function init(){
 			//initializing variables
 			canvas = document.querySelector('canvas');
@@ -24,8 +26,13 @@
 			analyserNode = createWebAudioContextWithAnalyserNode(audioElement);
 			
 			//hook up circle radius slider
-			document.querySelector('#circleRadiusSlider').onchange = function(e){
-				maxRadius = e.target.value;
+			document.querySelector('#circleAlpha').onchange = function(e){
+				alphaMult = e.target.value;
+			};
+			
+			document.querySelector('#backgroundCol').onchange = function(e){
+				document.querySelector("#canvas").style.backgroundColor = "rgb(0,0," + e.target.value+")";
+				document.querySelector("#colorResults").innerHTML = e.target.value;
 			};
 			
 			//hookup checkboxes
@@ -66,36 +73,61 @@
 			
 			drawDotLines(lineDotPositions.length);
 			if(average >100){
-				circleStarThings(); 
+	/*
+		var datadot = new Uint8Array(NUM_SAMPLES/3);
+			analyserNode.getByteFrequencyData(datadot);
+			for(var i=0; i<datadot.length; i++)
+			{
+				average2 += datadot[i];
 			}
+			average2 = average2/data.length;
+			circlArra.push(average2);
+			if{circlArra.index > 18}
+				circlArra.splice(18, 1);
+*/
+			
+			
+		
+			/*var barWidth = 4;
+			var barSpacing = 1;
+			var barHeight = 100;
+			var topSpacing = 50;*/
+		
+			
+			rotatingLines(lineDotPositions.length);
+
+				circleStarThings(); 
+			
 			for(var i=0; i<data.length; i++) { 
 				ctx.fillStyle = 'rgba(0,255,0,0.6)'; 
 				ctx.strokeStyle = 'rgba(0, 255, 0, 0.2)';
 				//red circles
 				var percent = data[i] / 255;
-				var circleRadius = percent * maxRadius;
+				var circleRadius = percent * 50;
 				ctx.beginPath();
-				ctx.fillStyle = makeColor(255, 111, 111, .34 - percent/ 3.0);
+				ctx.fillStyle = makeColor(255, 111, 111, (.24 * alphaMult) - percent/ 5.0 );
 				ctx.arc(canvas.width/2, canvas.height/2, circleRadius, 0, 2*Math.PI, false);
 				ctx.fill();
 				ctx.closePath();
 				//blue circles
 				ctx.beginPath();
-				ctx.fillStyle = makeColor(0, 0, 255, .10 - percent/10.0);
-				ctx.arc(canvas.width/2, canvas.height/2, circleRadius * 1.5, 0, 2*Math.PI);
+				ctx.fillStyle = makeColor(0, 0, 255, (.10 * alphaMult) - percent/1.5 * alphaMult);
+				ctx.arc(canvas.width/2, canvas.height/2, circleRadius * 8.25, 0, 2*Math.PI);
 				ctx.fill();
 				ctx.closePath();
 				//yellow circles
 				ctx.save();
 				ctx.beginPath();
-				ctx.fillStyle = makeColor(200, 200, 0, .5 - percent/5.0);
-				ctx.arc(canvas.width/2, canvas.height/2, circleRadius * .5, 0, 2*Math.PI);
+				ctx.fillStyle = makeColor(200, 200, 0, (.5* alphaMult) - percent/2.0 * alphaMult);
+				ctx.arc(canvas.width/2, canvas.height/2, circleRadius * .9, 0, 2*Math.PI);
 				ctx.fill();
 				ctx.closePath();
 				ctx.restore();
 			}
 			drawBezier();
-			document.querySelector("#sliderResults").innerHTML = maxRadius;
+				
+			}
+			document.querySelector("#sliderResults").innerHTML = alphaMult;
 			manipulatePixels();
 		} 
 		
@@ -182,14 +214,12 @@
 		/*Circle things*/
 		
 		
-function circleStarThings()
+function circleStarThings(xval)
 		{
-
-			var x = Math.random() * canvas.width;
-			var y = Math.random() * canvas.height;
+			var y = Math.random();
 				ctx.beginPath();
 				ctx.fillStyle = makeColor(2,205,180, 1);
-				ctx.arc(x , y, 5, 0, 2 * Math.PI);
+				ctx.arc(200 , y, 5, 0, 2 * Math.PI);
 				ctx.fill();
 				ctx.closePath();
 		}
